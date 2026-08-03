@@ -1,1 +1,1 @@
-self.__REACT_LOADABLE_MANIFEST="{}"
+self.__REACT_LOADABLE_MANIFEST='{"components\\\\LabTerminal.tsx -> @xterm/xterm":{"id":822,"files":["static/chunks/ba16dcd3.1d1ad411a2bb0dd4.js","static/chunks/357.bf6c455e4cf902f3.js"]}}';
