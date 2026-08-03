@@ -1,0 +1,13 @@
+{
+  "name": "CloudSec.studio",
+  "short_name": "CloudSec",
+  "description": "Cloud & Security Learning Hub — blogs, quizzes, and hands-on terminal labs.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0A0E12",
+  "theme_color": "#0A0E12",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
