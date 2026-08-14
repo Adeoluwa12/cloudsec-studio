@@ -23,26 +23,36 @@ export default function BlogFeed({ posts }: { posts: any[] }) {
           <Link
             key={post._id}
             href={`/blog/${post.slug}`}
-            className="group rounded-2xl border border-hairline bg-surface p-6 shadow-soft hover:shadow-card hover:-translate-y-0.5 transition-all block"
+            className="group rounded-2xl border border-hairline bg-surface shadow-soft hover:shadow-card hover:-translate-y-0.5 transition-all block overflow-hidden"
           >
-            <span className="font-mono text-xs text-accent">{post.category}</span>
-            <h3 className="font-display text-lg font-bold text-text mt-2 mb-2 group-hover:text-accent transition">
-              {post.title}
-            </h3>
-            <p className="text-textDim text-sm mb-4 line-clamp-3">{post.summary}</p>
-            <div className="flex gap-2 flex-wrap">
-              {post.tags?.slice(0, 3).map((tag: string) => (
-                <span
-                  key={tag}
-                  className="font-mono text-xs px-2 py-0.5 rounded-full bg-surfaceAlt border border-hairline text-textDim"
-                >
-                  #{tag}
-                </span>
-              ))}
+            {post.thumbnailUrl && (
+              <img
+                src={post.thumbnailUrl}
+                alt=""
+                className="w-full h-36 object-cover border-b border-hairline"
+              />
+            )}
+            <div className="p-6">
+              <span className="font-mono text-xs text-accent">{post.category}</span>
+              <h3 className="font-display text-lg font-bold text-text mt-2 mb-2 group-hover:text-accent transition">
+                {post.title}
+              </h3>
+              <p className="text-textDim text-sm mb-4 line-clamp-3">{post.summary}</p>
+              <div className="flex gap-2 flex-wrap">
+                {post.tags?.slice(0, 3).map((tag: string) => (
+                  <span
+                    key={tag}
+                    className="font-mono text-xs px-2 py-0.5 rounded-full bg-surfaceAlt border border-hairline text-textDim"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
             </div>
           </Link>
         ))}
       </div>
+
     </section>
   );
 }

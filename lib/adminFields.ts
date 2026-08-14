@@ -1,7 +1,7 @@
 export type FieldConfig = {
   name: string;
   label: string;
-  type: "text" | "textarea" | "number" | "select" | "tags" | "json";
+  type: "text" | "textarea" | "number" | "select" | "tags" | "json" | "image" | "video";
   options?: string[];
 };
 
@@ -13,7 +13,8 @@ export const FIELD_CONFIG: Record<string, FieldConfig[]> = {
     { name: "contentMarkdown", label: "Content (Markdown)", type: "textarea" },
     { name: "category", label: "Category", type: "text" },
     { name: "tags", label: "Tags (comma separated)", type: "tags" },
-    { name: "videoUrl", label: "Video URL", type: "text" },
+    { name: "thumbnailUrl", label: "Thumbnail", type: "image" },
+    { name: "videoUrl", label: "Lesson video", type: "video" },
     { name: "readTimeMinutes", label: "Read time (minutes)", type: "number" },
     { name: "status", label: "Status", type: "select", options: ["draft", "published"] },
   ],
@@ -40,7 +41,7 @@ export const FIELD_CONFIG: Record<string, FieldConfig[]> = {
   "interview-questions": [
     { name: "question", label: "Question", type: "text" },
     { name: "answerMarkdown", label: "Written answer (Markdown)", type: "textarea" },
-    { name: "videoUrl", label: "Video URL", type: "text" },
+    { name: "videoUrl", label: "Video walkthrough", type: "video" },
     { name: "category", label: "Category", type: "text" },
     { name: "difficulty", label: "Difficulty", type: "select", options: ["junior", "mid", "senior"] },
     { name: "order", label: "Display order", type: "number" },
@@ -55,6 +56,7 @@ export const EMPTY_VALUES: Record<string, any> = {
     contentMarkdown: "",
     category: "",
     tags: "",
+    thumbnailUrl: "",
     videoUrl: "",
     readTimeMinutes: 5,
     status: "draft",

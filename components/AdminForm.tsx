@@ -1,6 +1,75 @@
 "use client";
 
+import { useState } from "react";
 import { FieldConfig } from "@/lib/adminFields";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4001";
+
+function UploadField({
+  field,
+  value,
+  onChange,
+}: {
+  field: FieldConfig;
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState("");
+
+  async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setError("");
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_URL}/api/upload`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Upload failed");
+      onChange(data.url);
+    } catch (err: any) {
+      setError(err.message || "Upload failed");
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  return (
+    <div className="flex flex-col gap-2">
+      {value && field.type === "image" && (
+        <img src={value} alt="" className="w-24 h-24 object-cover rounded-xl border border-hairline" />
+      )}
+      {value && field.type === "video" && (
+        <video src={value} controls className="w-full max-w-xs rounded-xl border border-hairline" />
+      )}
+      <input
+        type="file"
+        accept={field.type === "image" ? "image/*" : "video/*"}
+        onChange={handleFile}
+        disabled={uploading}
+        className="focus-ring text-text text-xs file:mr-3 file:px-3 file:py-1.5 file:rounded-full file:border file:border-hairline file:bg-surface file:text-text file:text-xs"
+      />
+      {uploading && <p className="text-xs text-textDim">Uploading…</p>}
+      {error && <p className="text-xs text-warn">{error}</p>}
+      <input
+        type="text"
+        placeholder="or paste a URL directly (e.g. a YouTube embed link)"
+        value={value ?? ""}
+        onChange={(e) => onChange(e.target.value)}
+        className="focus-ring bg-surface border border-hairline rounded-xl px-3 py-2 text-text text-xs"
+      />
+    </div>
+  );
+}
 
 export default function AdminForm({
   fields,
@@ -52,6 +121,14 @@ export default function AdminForm({
                 </option>
               ))}
             </select>
+          )}
+
+          {(field.type === "image" || field.type === "video") && (
+            <UploadField
+              field={field}
+              value={values[field.name]}
+              onChange={(v) => onChange(field.name, v)}
+            />
           )}
 
           {(field.type === "text" || field.type === "number" || field.type === "tags") && (

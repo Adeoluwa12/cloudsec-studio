@@ -1,6 +1,7 @@
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import { getPost } from "@/lib/api";
+import { isDirectVideoFile } from "@/lib/video";
 
 export default async function BlogPost({ params }: { params: { slug: string } }) {
   const post = await getPost(params.slug).catch(() => null);
@@ -24,8 +25,12 @@ export default async function BlogPost({ params }: { params: { slug: string } })
       <p className="text-textDim text-xs font-mono mb-8">{post.readTimeMinutes} min read</p>
 
       {post.videoUrl && (
-        <div className="aspect-video mb-10 rounded-2xl overflow-hidden border border-hairline shadow-soft">
-          <iframe src={post.videoUrl} className="w-full h-full" allowFullScreen />
+        <div className="aspect-video mb-10 rounded-2xl overflow-hidden border border-hairline shadow-soft bg-ink">
+          {isDirectVideoFile(post.videoUrl) ? (
+            <video src={post.videoUrl} controls className="w-full h-full" />
+          ) : (
+            <iframe src={post.videoUrl} className="w-full h-full" allowFullScreen />
+          )}
         </div>
       )}
 
