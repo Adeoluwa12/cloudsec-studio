@@ -1,6 +1,25 @@
+"use client";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { loginUrl } from "@/lib/api";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4001";
+
 export default function Login() {
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    fetch(`${API_URL}/api/auth/me`, { headers: { Authorization: `Bearer ${token}` } })
+      .then((r) => r.json())
+      .then((user) => {
+        if (user?.email) router.replace(user.role === "admin" ? "/admin/dashboard" : "/dashboard");
+      })
+      .catch(() => {});
+  }, [router]);
+
   return (
     <main className="min-h-[80vh] flex items-center justify-center px-4 sm:px-6 gradient-mesh">
       <div className="w-full max-w-sm border border-hairline bg-surface rounded-2xl shadow-card p-8 text-center">
