@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import ThemeToggle from "@/components/ThemeToggle";
 
 const LINKS = [
@@ -10,8 +11,66 @@ const LINKS = [
   { href: "/dashboard", label: "Dashboard" },
 ];
 
+function parseToken(token: string): { name: string; role: string } | null {
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    return { name: payload.name || "", role: payload.role || "user" };
+  } catch {
+    return null;
+  }
+}
+
 export default function Nav() {
   const [open, setOpen] = useState(false);
+  const [user, setUser] = useState<{ name: string; role: string } | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const parsed = parseToken(token);
+      setUser(parsed);
+    }
+  }, []);
+
+  function handleSignOut() {
+    localStorage.removeItem("token");
+    setUser(null);
+    router.push("/");
+  }
+
+  const initial = user?.name?.charAt(0)?.toUpperCase() || "?";
+  const isAdmin = user?.role === "admin";
+
+  const AuthArea = () =>
+    user ? (
+      <div className="flex items-center gap-2">
+        {isAdmin && (
+          <Link
+            href="/admin/dashboard"
+            className="font-mono text-xs px-3 py-1 rounded-full bg-accentDim text-accent border border-hairline hover:bg-accent hover:text-ink transition"
+          >
+            Admin
+          </Link>
+        )}
+        <div
+          className="w-8 h-8 rounded-full bg-accent text-ink flex items-center justify-center font-semibold text-sm cursor-pointer"
+          title={user.name}
+          onClick={handleSignOut}
+          role="button"
+          aria-label={`Signed in as ${user.name}. Click to sign out.`}
+        >
+          {initial}
+        </div>
+      </div>
+    ) : (
+      <Link
+        href="/login"
+        className="focus-ring bg-accent text-ink text-sm font-semibold px-4 py-2 rounded-full shadow-soft hover:opacity-90 transition"
+      >
+        Sign in
+      </Link>
+    );
 
   return (
     <header className="sticky top-0 z-50 border-b border-hairline bg-surface/80 backdrop-blur-md">
@@ -37,12 +96,7 @@ export default function Nav() {
 
         <div className="hidden md:flex items-center gap-3">
           <ThemeToggle />
-          <Link
-            href="/login"
-            className="focus-ring bg-accent text-ink text-sm font-semibold px-4 py-2 rounded-full shadow-soft hover:opacity-90 transition"
-          >
-            Sign in
-          </Link>
+          <AuthArea />
         </div>
 
         <button
@@ -68,12 +122,7 @@ export default function Nav() {
           ))}
           <div className="flex items-center justify-between pt-2 border-t border-hairline">
             <ThemeToggle />
-            <Link
-              href="/login"
-              className="focus-ring bg-accent text-ink text-sm font-semibold px-4 py-2 rounded-full"
-            >
-              Sign in
-            </Link>
+            <AuthArea />
           </div>
         </div>
       )}
